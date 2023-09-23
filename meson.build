@@ -9,13 +9,16 @@ json = dependency('nlohmann_json')
 exe = executable(
     'lanchat2-server', 
     'src/lanchat2_server.cxx',
-    'src/Connection.cpp',
-    'src/Parser.cpp',
-    'src/Config.cpp',
-    'src/loggers/ConsoleLogger.cpp',
+    'src/Connection.cxx',
+    'src/Parser.cxx',
+    'src/Config.cxx',
+    'src/loggers/ConsoleLogger.cxx',
     install: true,
     dependencies: [
         asio,
         json,
+    ],
+    cpp_args: [
+        '-Wno-reorder'
     ]
 )

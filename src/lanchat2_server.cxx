@@ -17,7 +17,10 @@ void accept(ip::tcp::acceptor& acceptor, ILogger* logger) {
             logger->err(e.message());
         }
         auto sock_logger = new ConsoleLogger(logger->get_level(), socket.remote_endpoint().address().to_string());
-        auto conn = std::shared_ptr<Connection>(new Connection(socket, sock_logger));
+        auto conn = std::shared_ptr<Connection>(new Connection(
+            std::move(socket), 
+            sock_logger 
+        ));
         conn->run();
         accept(acceptor, logger);
     });
@@ -28,9 +31,18 @@ int main(int argc, char** argv) {
 
     auto config = Config();
     auto cli_logger = ConsoleLogger(ILogger::Level::Warn, "CLI");
+    
+    try {
+        config.from_file();
+    } catch(ConfigWarning& e) {
+        cli_logger.warn(e.what());
+    } catch(ConfigError& e) {
+        cli_logger.fatal(e.what());
+        return 1;
+    }
+
     try {
         config.from_args(argc, argv);
-        config.from_file();
     } catch(ConfigWarning& e) {
         cli_logger.warn(e.what());
     } catch(ConfigError& e) {

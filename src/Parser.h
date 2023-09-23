@@ -13,5 +13,5 @@ public:
     Parser() {};
     void reset();
     bool feed(std::string_view content);
-    std::optional<json>& get_json();
+    std::optional<json> get_json();
 };

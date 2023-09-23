@@ -2,6 +2,7 @@
 
 void Parser::reset() {
     this->buffer.erase();
+    this->doc.reset();
 }
 
 bool Parser::feed(std::string_view content) {
@@ -26,6 +27,6 @@ bool Parser::feed(std::string_view content) {
     return this->doc.has_value();
 }
 
-std::optional<json>& Parser::get_json() {
+std::optional<json> Parser::get_json() {
     return this->doc;
 }

@@ -1,5 +1,7 @@
 #include "Config.h"
 
+const std::string Config::GLOBAL_CONFIG_FNAME = "lanchat2.json";
+
 void Config::from_args(int argc, char** argv) {
     for(int i = 1; i < argc; i++) {
         if(
@@ -38,15 +40,6 @@ void Config::from_args(int argc, char** argv) {
                 throw ConfigError("--port must be a number from 0 to 65535");
             }
         }
-        else if(
-            !strcmp(argv[i], "--config-file")
-        ) {
-            int nxt = ++i;
-            if(nxt >= argc) {
-                throw ConfigError("--config-file must be a file name");
-            }
-            this->config_fname = argv[nxt];
-        }
         else {
             throw ConfigError("unrecognized parameter");
         }
@@ -54,19 +47,24 @@ void Config::from_args(int argc, char** argv) {
 }
 
 void Config::from_file() {
-    auto config_file = std::fstream(this->config_fname, std::ios::in);
-    if(!config_file.good()) {
-        throw ConfigWarning("no config file found");
+    auto global_config_file = std::fstream(Config::GLOBAL_CONFIG_FNAME, std::ios::in);
+    if(!global_config_file.good()) {
+        throw ConfigWarning("no global config file found");
     }
 
-    json config;
-    config_file >> config;
-    
-    if(config.contains("port")) {
-        this->port = config["port"].get<int>();
+    json global_config;
+
+    try {
+        global_config_file >> global_config;
+    } catch(json::exception& e) {
+        throw ConfigError(e.what());
     }
-    if(config.contains("log_level")) {
-        auto lv = config["port"].get<std::string>();
+    
+    if(global_config.contains("port")) {
+        this->port = global_config["port"].get<int>();
+    }
+    if(global_config.contains("log_level")) {
+        auto lv = global_config["port"].get<std::string>();
 
         if(lv == "debug") {
             this->log_level = ILogger::Level::Debug;

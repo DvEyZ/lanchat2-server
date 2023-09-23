@@ -31,16 +31,17 @@ void Connection::on_read(const std::error_code e, size_t bytes_transferred) {
 
     try {
         if(this->parser.feed(std::string_view(this->chunk.begin(), bytes_transferred))) {
-            std::stringstream msg;
-            msg << "message received: " << this->parser.get_json().value();
-            this->logger->info(msg.view());
-        } else {
-            this->read();
+            this->logger->info("message received");
+            this->on_message(this->parser.get_json().value());
+            this->parser.reset();
         }
     } catch(std::exception& e) {
         this->logger->err(e.what());
         this->shutdown();
+        return;
     }
+    
+    this->read();
 }
 
 void Connection::shutdown() {

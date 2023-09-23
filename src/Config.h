@@ -31,14 +31,14 @@ public:
 class Config
 {
 private:
+    const static std::string GLOBAL_CONFIG_FNAME;
+
     int port;
     ILogger::Level log_level;
-    std::string config_fname;
 public:
     Config() {
         port = 12398;
         log_level = ILogger::Level::Info;
-        config_fname = "config.json";
     }
 
     void from_args(int argc, char** argv);

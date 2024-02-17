@@ -7,8 +7,10 @@
 #include "Config.h"
 #include "Connection.h"
 #include "loggers/ConsoleLogger.h"
+#include "chat/Chat.h"
 
-#define VERSION "0.0.0"
+
+const char* VERSION = "0.0.0";
 
 namespace ip = asio::ip;
 using json = nlohmann::json;
@@ -22,18 +24,19 @@ void display_help() {
         << "\t-L, --log-level LEVEL:\t set log level; valid values are `debug`, `info`, `warn` and `err`; default is `info`\n";
 }
 
-void accept(ip::tcp::acceptor& acceptor, ILogger* logger) {
-    acceptor.async_accept([&acceptor, logger] (asio::error_code e, ip::tcp::socket socket) {
+void accept(ip::tcp::acceptor& acceptor, std::shared_ptr<Chat> chat, ILogger* logger) {
+    acceptor.async_accept([&acceptor, chat, logger] (asio::error_code e, ip::tcp::socket socket) {
         if(e) {
             logger->err(e.message());
         }
         auto sock_logger = std::make_unique<ConsoleLogger>(ConsoleLogger(logger->get_level(), socket.remote_endpoint().address().to_string()));
         auto conn = std::shared_ptr<Connection>(new Connection(
             std::move(socket), 
-            std::move(sock_logger) 
+            std::move(sock_logger),
+            chat
         ));
         conn->run();
-        accept(acceptor, logger);
+        accept(acceptor, chat, logger);
     });
 }
 
@@ -73,6 +76,7 @@ int main(int argc, char** argv) {
 
     try {
         auto acceptor = ip::tcp::acceptor(ctx, ip::tcp::endpoint(ip::tcp::v4(), port));
+        auto chat = std::shared_ptr<Chat>(new Chat(std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "Chat"))));
 
         global_logger.debug("logging in debug mode");
 
@@ -80,7 +84,7 @@ int main(int argc, char** argv) {
         msg << "listening on port " << port;
         global_logger.info(msg.view());
 
-        accept(acceptor, &global_logger);
+        accept(acceptor, chat, &global_logger);
 
         ctx.run();
     } catch(std::exception& e) {

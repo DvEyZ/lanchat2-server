@@ -17,6 +17,7 @@ std::string ChatHandle::to_descriptor() {
 
     if(this->type == Type::User) descriptor += "@";
     else if(this->type == Type::Group) descriptor += "#";
+    else if(this->type == Type::Internal) descriptor += "!";
         
     descriptor += this->name;
     return descriptor;

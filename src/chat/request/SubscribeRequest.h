@@ -9,13 +9,20 @@ using json = nlohmann::json;
 
 class SubscribeRequest : public IRequest {
 public:
-    const ChatHandle handle;
-    const std::map<std::string, std::string> extensions;
+    ChatHandle handle_as;
+    ChatHandle handle_to;
+    std::map<std::string, std::string> extensions;
 
-    SubscribeRequest(json j)
-        :handle(ChatHandle::from_descriptor(j["handle"].get<std::string>())),
+    SubscribeRequest(json j, ChatHandle def)
+        :handle_to(ChatHandle::from_descriptor(j["to"].get<std::string>())),
         extensions(j["extensions"].get<std::map<std::string, std::string>>())
-    {}
+    {
+        if(j.contains("as")) {
+            this->handle_as = ChatHandle::from_descriptor(j["as"].get<std::string>());
+        } else {
+            this->handle_as = def;
+        }
+    }
     
     virtual ~SubscribeRequest() {}
 

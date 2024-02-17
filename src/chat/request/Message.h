@@ -11,19 +11,24 @@ using json = nlohmann::json;
 
 class Message : public IRequest {
 public:
-    const ChatHandle handle_from;
-    const ChatHandle handle_to;
+    ChatHandle handle_from;
+    ChatHandle handle_to;
 
-    const std::map<std::string, std::string> extensions;
+    std::map<std::string, std::string> extensions;
 
-    const std::optional<std::string> body;
+    std::optional<std::string> body;
 
-    Message(json j) 
-        :handle_from(ChatHandle::from_descriptor(j["from"].get<std::string>())),
-        handle_to(ChatHandle::from_descriptor(j["to"].get<std::string>())),
+    Message(json j, ChatHandle def) 
+        :handle_to(ChatHandle::from_descriptor(j["to"].get<std::string>())),
         extensions(j["extensions"].get<std::map<std::string, std::string>>()),
         body(j["body"].get<std::optional<std::string>>())
-    {}
+    {
+        if(j.contains("from")) {
+            this->handle_from = ChatHandle::from_descriptor(j["from"].get<std::string>());
+        } else {
+            this->handle_from = def;
+        }
+    }
 
     virtual ~Message() {}
 

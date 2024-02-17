@@ -14,6 +14,7 @@ exe = executable(
     'src/Config.cxx',
     'src/loggers/ConsoleLogger.cxx',
     'src/chat/Chat.cxx',
+    'src/chat/ChatHookComposite.cxx',
     'src/chat/request/ChatHandle.cxx',
     'src/chat/request/request_factory.cxx',
     install: true,

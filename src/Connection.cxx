@@ -51,7 +51,7 @@ void Connection::shutdown() {
 }
 
 void Connection::on_message(json json) {
-    
+    // TODO
 }
 
 void Connection::run() {

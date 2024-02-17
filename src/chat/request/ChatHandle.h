@@ -4,11 +4,15 @@
 class ChatHandle {
 public:
     enum class Type {
-        User, Group, System
+        User, Group, System, Internal
     };
 
-    const std::string name;
-    const Type type;
+    std::string name;
+    Type type;
+
+    ChatHandle() 
+        :type(Type::Internal)
+    {};
 
     ChatHandle(std::string name, Type type) 
         :name(name), type(type)

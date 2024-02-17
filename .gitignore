@@ -1,5 +1,6 @@
 .vscode/
 builddir/
+notes/
 
 lanchat2.json
 *.lanchat2.json

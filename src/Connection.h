@@ -6,6 +6,7 @@
 #include <functional>
 #include "Parser.h"
 #include "loggers/ILogger.h"
+#include "chat/IChat.h"
 
 namespace ip = asio::ip;
 
@@ -16,14 +17,16 @@ class Connection :public std::enable_shared_from_this<Connection> {
     ip::tcp::socket socket;
     Parser parser;
     std::unique_ptr<ILogger> logger;
+    std::shared_ptr<IChat> chat;
 
     void read();
     void on_read(const asio::error_code e, size_t bytes_transferred);
     void shutdown();
 public:
-    Connection(ip::tcp::socket&& socket, std::unique_ptr<ILogger> logger)
+    Connection(ip::tcp::socket&& socket, std::unique_ptr<ILogger> logger, std::shared_ptr<IChat> chat)
         :socket(static_cast<ip::tcp::socket&&>(socket)), 
-        logger(std::move(logger))
+        logger(std::move(logger)),
+        chat(chat)
     {
         this->logger->info("connected");
     }

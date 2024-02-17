@@ -4,7 +4,7 @@
 #include <mutex>
 #include <iostream>
 
-class ConsoleLogger :public ILogger {
+class ConsoleLogger : public ILogger {
 private:
     static std::mutex out_lock;
 

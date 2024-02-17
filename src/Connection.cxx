@@ -13,10 +13,9 @@ void Connection::read() {
 void Connection::on_read(const std::error_code e, size_t bytes_transferred) {
     if(e) {
         if(
-            e.value() == static_cast<int>(std::errc::connection_reset)
+            e.value() != static_cast<int>(std::errc::connection_reset) &&
+            e.value() != static_cast<int>(std::errc::no_such_file_or_directory)
         ) {
-            this->logger->info("connection closed");
-        } else {
             std::stringstream msg;
             msg << "error " << e.value() << ": " << e.message();
             this->logger->err(msg.view());
@@ -49,6 +48,10 @@ void Connection::shutdown() {
         socket.shutdown(asio::socket_base::shutdown_type::shutdown_both);
         socket.close();
     }
+}
+
+void Connection::on_message(json json) {
+    
 }
 
 void Connection::run() {

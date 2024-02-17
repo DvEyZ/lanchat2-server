@@ -33,10 +33,12 @@ class Config
 private:
     const static std::string GLOBAL_CONFIG_FNAME;
 
+    bool is_help;
     int port;
     ILogger::Level log_level;
 public:
     Config() {
+        is_help = false;
         port = 12398;
         log_level = ILogger::Level::Info;
     }
@@ -44,6 +46,9 @@ public:
     void from_args(int argc, char** argv);
     void from_file();
     
+    bool get_is_help() {
+        return this->is_help;
+    }
     int get_port() {
         return this->port;
     }

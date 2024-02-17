@@ -1,10 +1,17 @@
 #include "ConsoleLogger.h"
+#include <iomanip>
 
 std::mutex ConsoleLogger::out_lock;
 
 void ConsoleLogger::write(std::string_view type, std::string_view msg) {
+    auto time = std::time(NULL);
+    auto local_time = *std::localtime(&time);
     out_lock.lock();
-    std::cerr << type << "[" << this->prefix << "]\t " << msg << "\n";
+
+    std::cerr
+        << "\033[2m" << std::put_time(&local_time, "%c %Z") << "\033[0m " 
+        << type << "[" << this->prefix << "]\t " << msg << "\n";
+
     out_lock.unlock();
 }
 

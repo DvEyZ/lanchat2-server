@@ -40,6 +40,11 @@ void Config::from_args(int argc, char** argv) {
                 throw ConfigError("--port must be a number from 0 to 65535");
             }
         }
+        else if(
+            !strcmp(argv[i], "-h") || !strcmp(argv[i], "-?") || !strcmp(argv[i], "--help")
+        ) {
+            this->is_help = true;
+        }
         else {
             throw ConfigError("unrecognized parameter");
         }
@@ -64,7 +69,7 @@ void Config::from_file() {
         this->port = global_config["port"].get<int>();
     }
     if(global_config.contains("log_level")) {
-        auto lv = global_config["port"].get<std::string>();
+        auto lv = global_config["log_level"].get<std::string>();
 
         if(lv == "debug") {
             this->log_level = ILogger::Level::Debug;

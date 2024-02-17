@@ -8,18 +8,29 @@
 #include "Connection.h"
 #include "loggers/ConsoleLogger.h"
 
+#define VERSION "0.0.0"
+
 namespace ip = asio::ip;
 using json = nlohmann::json;
+
+void display_help() {
+    std::cout 
+        << "LanChat2 server v" << VERSION << "\n\n"
+        << "Command line options:\n"
+        << "\t-h, -?, --help\t\t show this help\n"
+        << "\t-p, --port PORT:\t set listen port; default is 12398\n"
+        << "\t-L, --log-level LEVEL:\t set log level; valid values are `debug`, `info`, `warn` and `err`; default is `info`\n";
+}
 
 void accept(ip::tcp::acceptor& acceptor, ILogger* logger) {
     acceptor.async_accept([&acceptor, logger] (asio::error_code e, ip::tcp::socket socket) {
         if(e) {
             logger->err(e.message());
         }
-        auto sock_logger = new ConsoleLogger(logger->get_level(), socket.remote_endpoint().address().to_string());
+        auto sock_logger = std::make_unique<ConsoleLogger>(ConsoleLogger(logger->get_level(), socket.remote_endpoint().address().to_string()));
         auto conn = std::shared_ptr<Connection>(new Connection(
             std::move(socket), 
-            sock_logger 
+            std::move(sock_logger) 
         ));
         conn->run();
         accept(acceptor, logger);
@@ -48,6 +59,11 @@ int main(int argc, char** argv) {
     } catch(ConfigError& e) {
         cli_logger.fatal(e.what());
         return 1;
+    }
+
+    if(config.get_is_help()) {
+        display_help();
+        return 0;
     }
 
     int port = config.get_port();

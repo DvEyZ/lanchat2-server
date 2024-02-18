@@ -7,6 +7,7 @@ ChatHandle ChatHandle::from_descriptor(std::string descriptor) {
 
     if(type_char == '@') type = Type::User;
     else if(type_char == '#') type = Type::Group;
+    else if(type_char == '!') type = Type::Internal;
     else type = Type::System;
 
     return ChatHandle(name, type);

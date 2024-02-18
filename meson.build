@@ -8,6 +8,7 @@ json = dependency('nlohmann_json')
 
 exe = executable(
     'lanchat2-server', 
+    'src/utils/uuid.cxx',
     'src/lanchat2_server.cxx',
     'src/Connection.cxx',
     'src/Parser.cxx',
@@ -17,6 +18,7 @@ exe = executable(
     'src/chat/ChatHookComposite.cxx',
     'src/chat/request/ChatHandle.cxx',
     'src/chat/request/request_factory.cxx',
+    'src/chat/request/visitors/RequestRoutingVisitor.cxx',
     install: true,
     dependencies: [
         asio,

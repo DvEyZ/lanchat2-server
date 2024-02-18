@@ -22,11 +22,3 @@ std::string ChatHandle::to_descriptor() {
     descriptor += this->name;
     return descriptor;
 }
-
-bool operator<(const ChatHandle first, const ChatHandle second) {
-    if(first.type == second.type) {
-        return first.name < second.name;
-    } else {
-        return first.type < second.type;
-    }
-}

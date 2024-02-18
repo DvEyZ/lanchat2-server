@@ -32,6 +32,21 @@ public:
 
     virtual ~Message() {}
 
+    json to_json() {
+        json json;
+        if(this->handle_from.type != ChatHandle::Type::Internal) {
+            json["from"] = this->handle_from.to_descriptor();
+        }
+        if(this->handle_to.type != ChatHandle::Type::Internal) {
+            json["to"] = this->handle_to.to_descriptor();
+        }
+        json["extensions"] = this->extensions;
+        if(this->body.has_value()) {
+            json["body"] = this->body.value();
+        }
+        return json;
+    }
+
     virtual void accept_visitor(IRequestVisitor& v) {
         v.visit(*this);
     }

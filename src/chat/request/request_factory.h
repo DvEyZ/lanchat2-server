@@ -21,4 +21,4 @@ public:
     }
 };
 
-std::unique_ptr<IRequest> request_factory(json j);
+std::unique_ptr<IRequest> request_factory(json j, ChatHandle def);

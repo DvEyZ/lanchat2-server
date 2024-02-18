@@ -13,6 +13,8 @@ public:
     ChatHandle handle_to;
     std::map<std::string, std::string> extensions;
 
+    SubscribeRequest() {};
+
     SubscribeRequest(json j, ChatHandle def)
         :handle_to(ChatHandle::from_descriptor(j["to"].get<std::string>())),
         extensions(j["extensions"].get<std::map<std::string, std::string>>())

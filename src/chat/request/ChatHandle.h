@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class ChatHandle {
+struct ChatHandle {
 public:
     enum class Type {
         User, Group, System, Internal
@@ -20,6 +20,6 @@ public:
 
     static ChatHandle from_descriptor(std::string descriptor);
     std::string to_descriptor();
-};
 
-bool operator<(const ChatHandle first, const ChatHandle second);
+    auto operator<=>(ChatHandle const& other) const = default;
+};

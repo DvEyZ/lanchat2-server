@@ -8,6 +8,7 @@
 #include "Connection.h"
 #include "loggers/ConsoleLogger.h"
 #include "chat/Chat.h"
+#include "chat/systems/msg/CoreMsgHook.h"
 
 
 const char* VERSION = "0.0.0";
@@ -64,21 +65,36 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if(config.get_is_help()) {
+    if(config.is_help) {
         display_help();
         return 0;
     }
 
-    int port = config.get_port();
-    ILogger::Level log_level = config.get_log_level(); 
+    int port = config.port;
+    ILogger::Level log_level = config.log_level; 
 
     auto global_logger = ConsoleLogger(log_level, "Global");
+    global_logger.debug("logging in debug mode");
 
     try {
         auto acceptor = ip::tcp::acceptor(ctx, ip::tcp::endpoint(ip::tcp::v4(), port));
-        auto chat = std::shared_ptr<Chat>(new Chat(std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "Chat"))));
+        
+        auto chat = std::shared_ptr<Chat>(new Chat(
+            std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "Chat")),
+            asio::io_context::strand(ctx)
+        ));
+        if(config.core_msg_config.active) {
+            auto core_msg_hook = std::shared_ptr<CoreMsgHook>(
+                new CoreMsgHook(
+                    chat, 
+                    ChatHandle::from_descriptor("core:msg"), 
+                    config.core_msg_config, 
+                    std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "core:msg"))
+                )
+            );
+            chat->attach_hook(core_msg_hook);
+        }
 
-        global_logger.debug("logging in debug mode");
 
         std::stringstream msg;
         msg << "listening on port " << port;

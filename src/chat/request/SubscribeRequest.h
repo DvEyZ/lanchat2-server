@@ -25,6 +25,10 @@ public:
             this->handle_as = def;
         }
     }
+
+    SubscribeRequest(ChatHandle handle_as, ChatHandle handle_to, std::map<std::string, std::string> extensions) 
+        :handle_as(handle_as), handle_to(handle_to), extensions(extensions)
+    {}
     
     virtual ~SubscribeRequest() {}
 

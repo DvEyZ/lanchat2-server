@@ -1,8 +1,7 @@
 #include "Chat.h"
 #include "ChatHookComposite.h"
 
-void Chat::push_message(Message m) {
-    this->chat_lock.lock();
+void Chat::on_push_message(Message m) {
     this->logger->debug("message to " + m.handle_to.to_descriptor() + " pushed");
 
     auto hooks = ChatHookComposite(this->hooks);
@@ -37,13 +36,9 @@ void Chat::push_message(Message m) {
         this->logger->info("message rejected by " + r.hook + ", reason: " + r.what);
         hooks.on_message_push_rejected(r, m); // HOOK POINT on_message_push_rejected
     });
-    
-    this->chat_lock.unlock();
 }
 
-void Chat::subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
-    this->chat_lock.lock();
-
+void Chat::on_subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
     auto hooks = ChatHookComposite(this->hooks);
     hooks.on_handler_subscribe(r, [this, r, handler, &hooks] (SubscribeRequest req) {  // HOOK POINT on_handler_subscribe
         this->handlers.insert({ r.handle_to, handler });
@@ -53,6 +48,22 @@ void Chat::subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
         hooks.on_handler_subscribe_rejected(r, req); // HOOK POINT on_handler_subscribe rejected
         this->logger->info("subscription to " + req.handle_to.to_descriptor() + " rejected by " + r.hook + ", reason: " + r.what);
     });
-    
-    this->chat_lock.unlock();
+}
+
+void Chat::push_message(Message m) {
+    this->strand.wrap([this, m] () {
+        this->on_push_message(m);  
+    })();
+}
+
+void Chat::subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
+    this->strand.wrap([this, r, handler] () {
+        this->on_subscribe(r, handler);
+    })();
+}
+
+void Chat::attach_hook(std::shared_ptr<IChatHook> hook) {
+    this->strand.wrap([this, hook] () {
+        this->hooks.push_back(hook);
+    })();
 }

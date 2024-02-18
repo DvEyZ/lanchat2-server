@@ -83,4 +83,10 @@ void Config::from_file() {
             throw ConfigError("log_level must be one of: `debug`, `info`, `warn`, `err`");
         }
     }
+    if(global_config.contains("core_systems")) {
+        json core_systems = global_config["core_systems"].get<json>();
+        if(core_systems.contains("msg")) {
+            this->core_msg_config = CoreMsgConfig(core_systems["msg"].get<json>());
+        }
+    }
 }

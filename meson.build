@@ -19,6 +19,7 @@ exe = executable(
     'src/chat/request/ChatHandle.cxx',
     'src/chat/request/request_factory.cxx',
     'src/chat/request/visitors/RequestRoutingVisitor.cxx',
+    'src/chat/systems/msg/CoreMsgHook.cxx',
     install: true,
     dependencies: [
         asio,

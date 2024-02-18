@@ -30,6 +30,10 @@ public:
         }
     }
 
+    Message(ChatHandle handle_from, ChatHandle handle_to, std::map<std::string, std::string> extensions, std::optional<std::string> body) 
+        :handle_from(handle_from), handle_to(handle_to), extensions(extensions), body(body)
+    {}
+
     virtual ~Message() {}
 
     json to_json() {

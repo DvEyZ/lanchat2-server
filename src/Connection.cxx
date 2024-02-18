@@ -67,12 +67,10 @@ void Connection::run() {
     };
     this->handle = handle;
 
-    auto req = SubscribeRequest();
-    req.handle_as = handle;
-    req.handle_to = handle;
-
-    this->chat->subscribe(req, this->shared_from_this());
+    auto req = SubscribeRequest(handle, handle, {});
     this->logger->debug("connection handle: " + handle.to_descriptor());
+    this->chat->subscribe(req, this->shared_from_this());
+
     this->read();
 }
 

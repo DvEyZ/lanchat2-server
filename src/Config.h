@@ -5,6 +5,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "loggers/ILogger.h"
+#include "chat/systems/msg/CoreMsgConfig.h"
 
 using json = nlohmann::json;
 
@@ -30,29 +31,21 @@ public:
 
 class Config
 {
-private:
+public:
     const static std::string GLOBAL_CONFIG_FNAME;
 
     bool is_help;
     int port;
     ILogger::Level log_level;
-public:
+    CoreMsgConfig core_msg_config;
+
     Config() {
         is_help = false;
         port = 12398;
         log_level = ILogger::Level::Info;
+        core_msg_config = CoreMsgConfig();
     }
 
     void from_args(int argc, char** argv);
     void from_file();
-    
-    bool get_is_help() {
-        return this->is_help;
-    }
-    int get_port() {
-        return this->port;
-    }
-    ILogger::Level get_log_level() {
-        return this->log_level;
-    }
 };

@@ -88,5 +88,8 @@ void Config::from_file() {
         if(core_systems.contains("msg")) {
             this->core_msg_config = CoreMsgConfig(core_systems["msg"].get<json>());
         }
+        if(core_systems.contains("sanity")) {
+            this->core_sanity_config = CoreSanityConfig(core_systems["sanity"].get<json>());
+        }
     }
 }

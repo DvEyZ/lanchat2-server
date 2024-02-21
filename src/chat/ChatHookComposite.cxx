@@ -1,24 +1,15 @@
 #include "ChatHookComposite.h"
 
-void ChatHookComposite::on_message_push(
-    Message message, 
-    std::function<void(Message)> proceed,
-    std::function<void(Rejection, Message)> reject
+ChatHookResult ChatHookComposite::on_message_push(
+    Message message
 ) {
     for(auto i : this->hooks) {
-        bool rejected = false;
-        Rejection rejection;
-        i->on_message_push(message, [] (auto msg) {}, [&rejected, &rejection] (auto r, auto msg) {
-            rejected = true;
-            rejection = r;
-        });
-
-        if(rejected) {
-            reject(rejection, message);
-            return;
+        auto r = i->on_message_push(message);
+        if(!r.get_is_accepted()) {
+            return r;
         }
     }
-    proceed(message);
+    return ChatHookResult::accepted();
 }
 
 void ChatHookComposite::on_message_pushed(Message message) {
@@ -33,25 +24,16 @@ void ChatHookComposite::on_message_push_rejected(Rejection rejection, Message me
     }
 }
 
-void ChatHookComposite::on_handler_subscribe(
-    SubscribeRequest req,
-    std::function<void(SubscribeRequest)> proceed,
-    std::function<void(Rejection, SubscribeRequest)> reject
+ChatHookResult ChatHookComposite::on_handler_subscribe(
+    SubscribeRequest req
 ) {
     for(auto i : this->hooks) {
-        bool rejected = false;
-        Rejection rejection;
-        i->on_handler_subscribe(req, [] (auto req) {}, [&rejected, &rejection] (auto r, auto req) {
-            rejected = true;
-            rejection = r;
-        });
-
-        if(rejected) {
-            reject(rejection, req);
-            return;
+        auto r = i->on_handler_subscribe(req);
+        if(!r.get_is_accepted()) {
+            return r;
         }
     }
-    proceed(req);
+    return ChatHookResult::accepted();
 }
 
 void ChatHookComposite::on_handler_subscribed(SubscribeRequest req) {
@@ -66,26 +48,17 @@ void ChatHookComposite::on_handler_subscribe_rejected(Rejection rejection, Subsc
     }
 }
 
-void ChatHookComposite::on_handler_match(
+ChatHookResult ChatHookComposite::on_handler_match(
     Message message, 
-    ChatHandle handle, 
-    std::function<void(Message, ChatHandle)> proceed,
-    std::function<void(Rejection, Message, ChatHandle)> reject
+    ChatHandle handle
 ) {
     for(auto i : this->hooks) {
-        bool rejected = false;
-        Rejection rejection;
-        i->on_handler_match(message, handle, [] (auto msg, auto h) {}, [&rejected, &rejection] (auto r, auto msg, auto h) {
-            rejected = true;
-            rejection = r;
-        });
-
-        if(rejected) {
-            reject(rejection, message, handle);
-            return;
+        auto r = i->on_handler_match(message, handle);
+        if(!r.get_is_accepted()) {
+            return r;
         }
     }
-    proceed(message, handle);
+    return ChatHookResult::accepted();
 }
 
 void ChatHookComposite::on_handler_matched(Message message, ChatHandle handle) {

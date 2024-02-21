@@ -43,8 +43,12 @@ void Connection::on_read(const std::error_code e, size_t bytes_transferred) {
 
 void Connection::shutdown() {
     if(socket.is_open()) {
-        socket.shutdown(asio::socket_base::shutdown_type::shutdown_both);
-        socket.close();
+        try {
+            socket.shutdown(asio::socket_base::shutdown_type::shutdown_both);
+            socket.close();
+        } catch(std::exception& e) {
+            this->logger->err(e.what());
+        }
     }
 }
 
@@ -67,7 +71,7 @@ void Connection::run() {
     };
     this->handle = handle;
 
-    auto req = SubscribeRequest(handle, handle, {});
+    auto req = SubscribeRequest(generate_uuidv4(), handle, handle, handle, {});
     this->logger->debug("connection handle: " + handle.to_descriptor());
     this->chat->subscribe(req, this->shared_from_this());
 

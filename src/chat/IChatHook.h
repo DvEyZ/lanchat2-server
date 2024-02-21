@@ -8,13 +8,42 @@ struct Rejection {
     std::string what;
 };
 
+class ChatHookResult {
+private:
+    bool is_accepted;
+    Rejection rejection;
+    ChatHookResult(bool accepted, Rejection rejection)
+        :is_accepted(accepted), rejection(rejection)
+    {}
+    ChatHookResult() {};
+public:
+    static ChatHookResult accepted() {
+        ChatHookResult res;
+        res.is_accepted = true;
+        return res;
+    }
+
+    static ChatHookResult rejected(Rejection rejection) {
+        ChatHookResult res;
+        res.is_accepted = false;
+        res.rejection = rejection;
+        return res;
+    };
+
+    bool get_is_accepted() {
+        return this->is_accepted;
+    }
+
+    Rejection get_rejection() {
+        return this->rejection;
+    }
+};
+
 class IChatHook {
 public:
     virtual ~IChatHook() {};
-    virtual void on_message_push(
-        Message message, 
-        std::function<void(Message)> proceed,
-        std::function<void(Rejection, Message)> reject
+    virtual ChatHookResult on_message_push(
+        Message message
     ) = 0;
 
     virtual void on_message_pushed(
@@ -26,10 +55,8 @@ public:
         Message message
     ) = 0;
     
-    virtual void on_handler_subscribe(
-        SubscribeRequest req,
-        std::function<void(SubscribeRequest)> proceed,
-        std::function<void(Rejection, SubscribeRequest)> reject
+    virtual ChatHookResult on_handler_subscribe(
+        SubscribeRequest req
     ) = 0;
 
     virtual void on_handler_subscribed(
@@ -41,11 +68,9 @@ public:
         SubscribeRequest req
     ) = 0;
 
-    virtual void on_handler_match(
+    virtual ChatHookResult on_handler_match(
         Message message, 
-        ChatHandle handle, 
-        std::function<void(Message, ChatHandle)> proceed,
-        std::function<void(Rejection, Message, ChatHandle)> reject
+        ChatHandle handle
     ) = 0;
 
     virtual void on_handler_matched(

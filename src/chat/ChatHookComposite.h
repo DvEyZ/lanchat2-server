@@ -8,10 +8,8 @@ public:
     ChatHookComposite(std::vector<std::shared_ptr<IChatHook>>& hooks) :hooks(hooks) {}
     ~ChatHookComposite() {}
 
-    virtual void on_message_push(
-        Message message, 
-        std::function<void(Message)> proceed,
-        std::function<void(Rejection, Message)> reject
+    virtual ChatHookResult on_message_push(
+        Message message
     );
 
     virtual void on_message_pushed(
@@ -23,10 +21,8 @@ public:
         Message message
     );
     
-    virtual void on_handler_subscribe(
-        SubscribeRequest req,
-        std::function<void(SubscribeRequest)> proceed,
-        std::function<void(Rejection, SubscribeRequest)> reject
+    virtual ChatHookResult on_handler_subscribe(
+        SubscribeRequest req
     );
 
     virtual void on_handler_subscribed(
@@ -38,11 +34,9 @@ public:
         SubscribeRequest req
     );
 
-    virtual void on_handler_match(
+    virtual ChatHookResult on_handler_match(
         Message message, 
-        ChatHandle handle, 
-        std::function<void(Message, ChatHandle)> proceed,
-        std::function<void(Rejection, Message, ChatHandle)> reject
+        ChatHandle handle
     );
 
     virtual void on_handler_matched(

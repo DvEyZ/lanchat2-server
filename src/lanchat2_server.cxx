@@ -9,6 +9,7 @@
 #include "loggers/ConsoleLogger.h"
 #include "chat/Chat.h"
 #include "chat/systems/msg/CoreMsgHook.h"
+#include "chat/systems/sanity/CoreSanityHook.h"
 
 
 const char* VERSION = "0.0.0";
@@ -83,6 +84,7 @@ int main(int argc, char** argv) {
             std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "Chat")),
             asio::io_context::strand(ctx)
         ));
+        
         if(config.core_msg_config.active) {
             auto core_msg_hook = std::shared_ptr<CoreMsgHook>(
                 new CoreMsgHook(
@@ -95,6 +97,16 @@ int main(int argc, char** argv) {
             chat->attach_hook(core_msg_hook);
         }
 
+        if(config.core_sanity_config.active) {
+            auto core_sanity_hook = std::shared_ptr<CoreSanityHook>(
+                new CoreSanityHook(
+                    ChatHandle::from_descriptor("core:sanity"),
+                    config.core_sanity_config,
+                    std::make_unique<ConsoleLogger>(ConsoleLogger(global_logger.get_level(), "core:sanity"))
+                )
+            );
+            chat->attach_hook(core_sanity_hook);
+        }
 
         std::stringstream msg;
         msg << "listening on port " << port;

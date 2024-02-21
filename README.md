@@ -6,7 +6,7 @@
 - [X] Server base
 - [ ] Core systems
   - [X] `core:msg`
-  - [ ] `core:sanity`
+  - [X] `core:sanity`
   - [ ] `core:query`
   - [ ] `core:auth`
   - [ ] `core:persistence`

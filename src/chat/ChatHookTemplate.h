@@ -6,11 +6,9 @@ public:
     ChatHookTemplate() {}
     virtual ~ChatHookTemplate() {}
 
-    virtual void on_message_push(
-        Message message, 
-        std::function<void(Message)> proceed,
-        std::function<void(Rejection, Message)> reject
-    ) { proceed(message); };
+    virtual ChatHookResult on_message_push(
+        Message message
+    ) { return ChatHookResult::accepted(); };
 
     virtual void on_message_pushed(
         Message message
@@ -21,11 +19,9 @@ public:
         Message message
     ) {};
     
-    virtual void on_handler_subscribe(
-        SubscribeRequest req,
-        std::function<void(SubscribeRequest)> proceed,
-        std::function<void(Rejection, SubscribeRequest)> reject
-    ) { proceed(req); };
+    virtual ChatHookResult on_handler_subscribe(
+        SubscribeRequest req
+    ) { return ChatHookResult::accepted(); };
 
     virtual void on_handler_subscribed(
         SubscribeRequest req
@@ -36,12 +32,10 @@ public:
         SubscribeRequest req
     ) {};
 
-    virtual void on_handler_match(
+    virtual ChatHookResult on_handler_match(
         Message message, 
-        ChatHandle handle, 
-        std::function<void(Message, ChatHandle)> proceed,
-        std::function<void(Rejection, Message, ChatHandle)> reject
-    ) { proceed(message, handle); };
+        ChatHandle handle
+    ) { return ChatHookResult::accepted(); };
 
     virtual void on_handler_matched(
         Message message,

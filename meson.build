@@ -20,12 +20,14 @@ exe = executable(
     'src/chat/request/request_factory.cxx',
     'src/chat/request/visitors/RequestRoutingVisitor.cxx',
     'src/chat/systems/msg/CoreMsgHook.cxx',
+    'src/chat/systems/sanity/CoreSanityHook.cxx',
     install: true,
     dependencies: [
         asio,
         json,
     ],
     cpp_args: [
-        '-Wno-reorder'
+        '-Wno-reorder',
+        '-Wno-unused-parameter'
     ]
 )

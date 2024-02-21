@@ -1,11 +1,9 @@
 #pragma once
 #include <nlohmann/json.hpp>
-#include <optional>
 
 using json = nlohmann::json;
 
-class CoreMsgConfig
-{
+class CoreMsgConfig {
 public:
     bool active;
     bool on_message_pushed;
@@ -20,11 +18,20 @@ public:
     CoreMsgConfig(json j) 
         :active(true), on_message_pushed(true), on_message_push_rejected(true), on_handler_subscribed(true), on_handler_subscribe_rejected(true)
     {
-        if(j.contains("active")) this->active = j["active"].get<bool>();
-        if(j.contains("on_message_pushed")) this->on_message_pushed = j["on_message_pushed"].get<bool>();
-        if(j.contains("on_message_push_rejected")) this->on_message_push_rejected = j["on_message_push_rejected"].get<bool>();
-        if(j.contains("on_handler_subscribed")) this->on_handler_subscribed = j["on_handler_subscribed"].get<bool>();
-        if(j.contains("on_handler_subscribe_rejected")) this->on_handler_subscribe_rejected = j["on_handler_subscribe_rejected"].get<bool>();
+        if(j.contains(json::json_pointer("active"))) 
+            this->active = j["active"].get<bool>();
+
+        if(j.contains(json::json_pointer("on_message_pushed")))
+            this->on_message_pushed = j["on_message_pushed"].get<bool>();
+
+        if(j.contains(json::json_pointer("on_message_push_rejected")))
+            this->on_message_push_rejected = j["on_message_push_rejected"].get<bool>();
+
+        if(j.contains(json::json_pointer("on_handler_subscribed")))
+            this->on_handler_subscribed = j["on_handler_subscribed"].get<bool>();
+            
+        if(j.contains(json::json_pointer("on_handler_subscribe_rejected")))
+            this->on_handler_subscribe_rejected = j["on_handler_subscribe_rejected"].get<bool>();
     }
 
     ~CoreMsgConfig() {}

@@ -45,5 +45,7 @@ public:
     }
 
     void run();
+
+    // impl IChatHandler
     virtual void handle_message(Message message);
 };

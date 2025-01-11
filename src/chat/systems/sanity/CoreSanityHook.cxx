@@ -19,3 +19,16 @@ ChatHookResult CoreSanityHook::on_message_push(
     }
     return ChatHookResult::accepted();
 }
+
+ChatHookResult CoreSanityHook::on_handler_subscribe(
+    SubscribeRequest req
+) {
+    if(this->config.reject_to_internal) {
+        if(req.handle_to.type == ChatHandle::Type::Internal)
+            return ChatHookResult::rejected(Rejection {
+                .hook = this->handle.to_descriptor(),
+                .what = "direct subscriptions to internal handles are not allowed"
+            });
+    }
+    return ChatHookResult::accepted();
+}

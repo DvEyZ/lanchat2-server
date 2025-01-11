@@ -10,8 +10,8 @@ void CoreMsgHook::on_message_pushed(Message message) {
         this->handle, 
         message.internal_from, 
         {
-            { "res_to", message.req_id },
-            { "status", "Completed" }
+            { "core:res_to", message.req_id },
+            { "core:msg:status", "Completed" }
         }, 
         "message delivered"
     );
@@ -27,8 +27,8 @@ void CoreMsgHook::on_message_push_rejected(Rejection rejection, Message message)
         this->handle, 
         message.internal_from, 
         {
-            { "res_to", message.req_id },
-            { "status", "Failed" }
+            { "core:res_to", message.req_id },
+            { "core:msg:status", "Failed" }
         }, 
         rejection.hook + ": failed to push message: " + rejection.what
     );
@@ -42,8 +42,8 @@ void CoreMsgHook::on_handler_subscribed(SubscribeRequest req) {
         this->handle, 
         req.internal_as, 
         {
-            { "res_to", req.req_id },
-            { "status", "Completed" }
+            { "core:res_to", req.req_id },
+            { "core:msg:status", "Completed" }
         }, 
         "subscribed to " + req.handle_to.to_descriptor()
     );
@@ -57,8 +57,8 @@ void CoreMsgHook::on_handler_subscribe_rejected(Rejection rejection, SubscribeRe
         this->handle, 
         req.internal_as, 
         {
-            { "res_to", req.req_id },
-            { "status", "Failed" }
+            { "core:res_to", req.req_id },
+            { "core:msg:status", "Failed" }
         }, 
         rejection.hook + ": failed to subscribe to " + req.handle_to.to_descriptor() + ": " + rejection.what
     );

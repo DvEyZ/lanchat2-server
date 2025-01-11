@@ -3,7 +3,7 @@
 
 ## Extensions
 
-- `res_to` - ID of the requests the system is responding to.
-- `status` - Status of request.
+- `core:res_to` - ID of the request the system is responding to.
+- `core:msg:status` - Status of request.
   - `Completed` - request succeeded.
   - `Failed` - request failed.

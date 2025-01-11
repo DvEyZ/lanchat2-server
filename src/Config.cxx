@@ -91,5 +91,8 @@ void Config::from_file() {
         if(core_systems.contains("sanity")) {
             this->core_sanity_config = CoreSanityConfig(core_systems["sanity"].get<json>());
         }
+        if(core_systems.contains("auth")) {
+            this->core_auth_config = CoreAuthConfig(core_systems["auth"].get<json>());
+        }
     }
 }

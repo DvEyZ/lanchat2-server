@@ -10,12 +10,13 @@ void Chat::on_push_message(Message m) {
     if(on_push.get_is_accepted())
     {
         auto [i, end] = this->handlers.equal_range(m.handle_to);
+        this->logger->debug("matched " + std::to_string(this->handlers.count(m.handle_to)) + " handlers");
 
         for(;i != end; i++) {
             ChatHandle h = i->first;
             
             if(i->second.expired()) {
-                hooks.on_handler_expired(std::move(m), h);  // HOOK POINT on_handler_expired
+                hooks.on_handler_expired(m, h);  // HOOK POINT on_handler_expired
                 this->handlers.erase(i);
                 this->logger->debug("handler at " + h.to_descriptor() + " removed");
             } else {
@@ -56,6 +57,13 @@ void Chat::on_subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler)
     };
 }
 
+void Chat::on_subscribe_internal(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
+    auto hooks = ChatHookComposite(this->hooks);
+    this->handlers.insert({ r.handle_to, handler });
+    hooks.on_handler_subscribed(r);
+    this->logger->debug(r.handle_as.to_descriptor() + " subscribed to " + r.handle_to.to_descriptor());
+}
+
 void Chat::push_message(Message m) {
     this->strand.wrap([this, m] () {
         this->on_push_message(m);  
@@ -65,6 +73,12 @@ void Chat::push_message(Message m) {
 void Chat::subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
     this->strand.wrap([this, r, handler] () {
         this->on_subscribe(r, handler);
+    })();
+}
+
+void Chat::subscribe_internal(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) {
+    this->strand.wrap([this, r, handler] () {
+        this->on_subscribe_internal(r, handler);
     })();
 }
 

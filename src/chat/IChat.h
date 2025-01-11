@@ -13,4 +13,5 @@ public:
     virtual ~IChat() {}
     virtual void push_message(Message m) = 0;
     virtual void subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) = 0;
+    virtual void subscribe_internal(SubscribeRequest r, std::weak_ptr<IChatHandler> handler) = 0;
 };

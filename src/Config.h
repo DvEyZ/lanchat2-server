@@ -1,34 +1,16 @@
 #pragma once
 
 #include <string>
-#include <exception>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include "ConfigError.h"
 #include "loggers/ILogger.h"
 #include "chat/systems/msg/CoreMsgConfig.h"
 #include "chat/systems/sanity/CoreSanityConfig.h"
+#include "chat/systems/auth/CoreAuthConfig.h"
 
 using json = nlohmann::json;
 
-class ConfigError :public std::exception {
-private:
-    std::string msg;
-public:
-    ConfigError(std::string msg) :msg(msg) {};
-    const char* what() {
-        return msg.c_str();
-    }
-};
-
-class ConfigWarning :public std::exception {
-private:
-    std::string msg;
-public:
-    ConfigWarning(std::string msg) :msg(msg) {};
-    const char* what() {
-        return msg.c_str();
-    }
-};
 
 class Config {
 public:
@@ -40,6 +22,7 @@ public:
 
     CoreMsgConfig core_msg_config;
     CoreSanityConfig core_sanity_config;
+    CoreAuthConfig core_auth_config;
 
     Config() {
         is_help = false;
@@ -47,6 +30,7 @@ public:
         log_level = ILogger::Level::Info;
         core_msg_config = CoreMsgConfig();
         core_sanity_config = CoreSanityConfig();
+        core_auth_config = CoreAuthConfig();
     }
 
     void from_args(int argc, char** argv);

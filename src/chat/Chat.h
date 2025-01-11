@@ -18,6 +18,7 @@ private:
 
     void on_push_message(Message m);
     void on_subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler);
+    void on_subscribe_internal(SubscribeRequest r, std::weak_ptr<IChatHandler> handler);
 public:
     Chat(std::unique_ptr<ILogger> logger, asio::io_context::strand strand) 
         :logger(std::move(logger)), strand(strand)
@@ -28,4 +29,8 @@ public:
 
     virtual void push_message(Message m);
     virtual void subscribe(SubscribeRequest r, std::weak_ptr<IChatHandler> handler);
+
+    /// like `Chat::subscribe`, but without `on_handler_subscribe` hook
+    /// use for internal subscriptions
+    virtual void subscribe_internal(SubscribeRequest r, std::weak_ptr<IChatHandler> handler);
 };

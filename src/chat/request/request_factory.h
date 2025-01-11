@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include "Message.h"
 #include "SubscribeRequest.h"
+#include "UnsubscribeRequest.h"
 
 using json = nlohmann::json;
 

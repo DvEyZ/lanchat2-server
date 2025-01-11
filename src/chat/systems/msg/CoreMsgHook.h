@@ -18,19 +18,23 @@ public:
     }
     virtual ~CoreMsgHook() {}
 
+    // impl ChatHookTemplate
     virtual void on_message_pushed(
         Message message
     );
 
+    // impl ChatHookTemplate
     virtual void on_message_push_rejected(
         Rejection rejection,
         Message message
-    );
+    ); 
 
+    // impl ChatHookTemplate
     virtual void on_handler_subscribed(
         SubscribeRequest req
     );
 
+    // impl ChatHookTemplate
     virtual void on_handler_subscribe_rejected(
         Rejection rejection,
         SubscribeRequest req

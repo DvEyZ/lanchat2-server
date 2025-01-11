@@ -73,7 +73,7 @@ void Connection::run() {
 
     auto req = SubscribeRequest(generate_uuidv4(), handle, handle, handle, {});
     this->logger->debug("connection handle: " + handle.to_descriptor());
-    this->chat->subscribe(req, this->shared_from_this());
+    this->chat->subscribe_internal(req, this->shared_from_this());
 
     this->read();
 }

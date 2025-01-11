@@ -13,7 +13,9 @@ public:
         :active(true), reject_to_internal(true), reject_from_group_handle(true)
     {}
 
-    CoreSanityConfig(json j) {
+    CoreSanityConfig(json j) 
+        :active(true), reject_to_internal(true), reject_from_group_handle(true)
+    {
         if(j.contains(json::json_pointer("active"))) 
             this->active = j["active"].get<bool>();
 

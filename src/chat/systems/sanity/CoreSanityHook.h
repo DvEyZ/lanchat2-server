@@ -17,7 +17,13 @@ public:
 
     virtual ~CoreSanityHook() {}
 
+    // impl ChatHookTemplate
     virtual ChatHookResult on_message_push(
         Message message
+    );
+
+    // impl ChatHookTemplate
+    virtual ChatHookResult on_handler_subscribe(
+        SubscribeRequest req
     );
 };

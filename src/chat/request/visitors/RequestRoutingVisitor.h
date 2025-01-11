@@ -15,4 +15,5 @@ public:
 
     virtual void visit(Message msg);
     virtual void visit(SubscribeRequest req);
+    virtual void visit(UnsubscribeRequest req);
 };
